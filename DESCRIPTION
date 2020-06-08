@@ -1,0 +1,27 @@
+Package: cmdcR
+Type: Package
+Title: Client library to access COVID-19 Modeling Data Collaborative (CMDC) API
+Version: 0.1.0
+Authors@R: person("Spencer", "Lyon", email="spencer.lyon@valorumdata.com", role=c("aut", "cre")) 
+Description: Client library to access COVID-19 Modeling Data Collaborative (CMDC) API in R.
+  CMDC is a collaborative collection of datasets useful to policy makers and researchers 
+  working on COVID-19 related questions. The aim of the project is to provide these individuals
+  with convenient access to all the data they might need to effectively support a safe reopening
+  of social and economic behaviors. The project gathers data on public health, demograhpics, economics,
+  policies and more. All data is and always will be free to use.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+URL: https://covid.valorum.ai
+BugReports: https://github.com/valorumdata/cmdcR/issues
+RoxygenNote: 7.1.0
+Imports: 
+    reticulate,
+    httr,
+    rlang,
+    tibble,
+    magrittr
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
