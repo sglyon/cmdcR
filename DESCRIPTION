@@ -23,5 +23,7 @@ Imports:
     magrittr
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    usmap,
+    ggplot2
 VignetteBuilder: knitr

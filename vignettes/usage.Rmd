@@ -20,7 +20,7 @@ library(cmdcR)
 
 Welcome to the cmdcR docs!
 
-As of right now, this library is a wrapper around the [cmdc.py](https://github.com/valorumdata/cmdc.py) Python client. For more examples and documentation, please see that library.
+As of right now, this library is a wrapper around the [cmdc.py](https://github.com/valorumdata/cmdc.py) Python client. For more examples and documentation, please see that library. If you are an R programmer and are willing to contribute to making a native library, please reach out at our [repository](https://github.com/valorumdata/cmdcR)!
 
 Also, please see the [project website](https://covid.valorum.ai) for more information.
 
@@ -52,8 +52,33 @@ You can see which datasets are available using the `datasets` method:
 datasets(cl)
 ```
 
-You can get information and help on a dataset, by 
+You can get information and help on a dataset, by using the `info` method
 
 ```{r}
-# TODO: this is not working yet
+info(cl, "demographics")
 ```
+
+or
+
+```{r}
+info(cl, "mobility_devices")
+```
+
+
+### Example
+
+Let's build a map of total cases as of June 9, 2020 (date of writing)
+
+```{r}
+library(usmap)
+library(ggplot2)
+
+df <- cl %>% covid(variable="deaths_total", fips=c(1:60), dt="2020-06-05") %>% fetch()
+
+
+plot_usmap(data = df, values = "deaths_total") + 
+  scale_fill_continuous(
+     type="viridis", name = "Cumulative Deaths", label = scales::comma
+  ) + theme(legend.position = "right")
+```
+

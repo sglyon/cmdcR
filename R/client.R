@@ -1,11 +1,17 @@
+#' Construct a client to talk to the CMDC api
+#'
+#' @param apikey A string containing the APIKEY.
+#' @return An S3 object with class cmdcClient that implements routines for accessing CMDC API endpoints
+#'
 #' @export
 #'
 #' @exportPattern ^[^\.]
 #' @importFrom magrittr "%>%"
 #' @export %>%
-client <- function(apiKey = NULL) {
-  structure(list(pyClient = cmdcPY$Client(apiKey)),
-            class = c("cmdcClient"))
+client <- function(apikey = NULL) {
+  pyClient = cmdcPY$Client(apikey)
+  fields <- list(pyClient=pyClient)
+  structure(fields, class = c("cmdcClient"))
 }
 
 
@@ -51,4 +57,18 @@ register.cmdcClient <- function (x, ...) {
 reset.cmdcClient <- function (x) {
   x$pyClient$reset()
   x
+}
+
+#' Get information about the API as a whole (`info(client)`) or a specific
+#' endpoint (`info(client, endpoint)`, for exapmle `info(client, "demographics")`)
+#' @export
+info.cmdcClient <- function(c, x=NULL) {
+  if (is.null(x)) {
+    print(c)
+    print("Datasets are:")
+    cat(c("", datasets(c)), sep="\n- ")
+    return
+  } else {
+    cat(c[[paste0(x, "_help")]])
+  }
 }

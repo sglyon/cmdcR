@@ -10,6 +10,7 @@ reset <- function(x) UseMethod("reset")
 #' @export
 register <- function(x, ...) UseMethod("register")
 
+
 cmdcPY <- NULL
 
 .onLoad <- function (libname, pkgname) {
