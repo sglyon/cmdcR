@@ -1,0 +1,332 @@
+---
+title: "cmdcR"
+output:
+  github_document: null
+  rmarkdown::html_vignette: null
+vignette: >
+  %\VignetteIndexEntry{cmdcR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Welcome to the R client library for accessing the COVID Modeling Data
+Collaborative (CMDC) database.
+
+Links:
+
+  - [Repository](https://github.com/valorumdata/cmdcR)
+  - [Website](https://covid.valorum.ai/)
+  - [Python](https://github.com/valorumdata/cmdc.py) and
+    [Julia](https://github.com/valorumdata/CMDC.jl) clients
+  - [Raw REST API](https://covid.valorum.ai/rest-api)
+  - [GraphQL API](https://covid.valorum.ai/graphql-api)
+
+As of right now, this library is a wrapper around the
+[cmdc.py](https://github.com/valorumdata/cmdc.py) Python client. For
+more examples and documentation, please see that library. If you are an
+R programmer and are willing to contribute to making a native library,
+please reach out at our
+[repository](https://github.com/valorumdata/cmdcR)\!
+
+Also, please see the [project website](https://covid.valorum.ai) for
+more information.
+
+## COVID Modeling Data Collaborative
+
+The COVID Modeling Data Collaborative (CMDC) is a project funded by
+[Schmidt Futures](https://schmidtfutures.com/) and seeks to simplify the
+data ingestion process for researchers and policy makers who are working
+to enact and understand COVID-19 related policies. We accomplish this
+goal in several ways:
+
+  - Collect unique, hard-to-acquire, datasets that are not widely
+    distributed
+  - Aggregate data collected by other related organizations into a
+    centralized database
+  - Work with other related organizations to expand and improve their
+    data collection processes
+  - Build tools, such as this library (and
+    [Python](https://github.com/valorumdata/cmdc.py) and
+    [Julia](https://github.com/valorumdata/CMDC.jl) equivalents), to
+    simplify the data ingestion process
+
+More information about our project and what data is collected can be
+found on our [website](https://covid.valorum.ai/).
+
+We are always looking to hear from both those who would like to help us
+build CMDC and those who would like use CMDC. [Please reach out to
+us](https://covid.valorum.ai/contact)\!
+
+## Installation
+
+Please install this package using `devtools::install_github` as follows
+
+```{r install, eval=FALSE}
+devtools::install_github("valorumdata/cmdcR")
+```
+
+After installing the package, you need to make sure that the underlying
+python package is installed.
+
+To do this, use
+
+```{r installPy, eval=FALSE}
+cmdcR::install_cmdcPY()
+```
+
+During the installation process, R will check if you have an existing
+Python installation that can be used
+
+You may be prompted to accept the installation of a dedicated Python
+(via miniconda) for R to use
+
+We recommend that you accept this request, but if you are comfortable
+managing your own Python installation you can say no
+
+## Creating a Client
+
+Once the package is installed, the first step is to create an API
+client:
+
+```{r setup}
+library(cmdcR)
+```
+
+```{r createClient}
+cl <- client()
+```
+
+## Datasets
+
+You can see a list of currently available datasets using:
+
+```{r datasets}
+datasets(cl)
+```
+
+Each dataset has an associated function
+
+You can get detailed information on a specific dataset using the `info`
+method. For example
+
+```{r info}
+info(cl)
+
+info(cl, "demographics")
+
+info(cl, "covid_historical")
+```
+
+## Requesting Data
+
+Requesting a dataset has three parts:
+
+1.  Create a client
+2.  Build a request with desired datasets
+3.  `fetch` the datasets
+
+### 1\. Create a client
+
+To create a client, use the `client` function as shown above
+
+```{r client2, eval=FALSE}
+cl <- client()
+```
+
+You can optionally pass in an API key if you have one (see section on
+API keys below)
+
+```{r clientWithKey, eval=FALSE}
+cl <- client("my api key")
+```
+
+If you have previously registered for an API key (again, see below) on
+your current machine, it will be loaded and used automatically for you
+
+In practice you should rarely need to pass the apikey by hand unless you
+are loading the key from an environment variable or another source
+
+### 2. Build a request
+
+Each of the datasets in the API have an associated function
+
+To add datasets to the current request, `datasetName(client)` function:
+
+```{r buildRequestFuncs}
+covid(cl, state="CA")
+
+demographics(cl)
+
+cl
+```
+
+You can see that the printed form of the client is updated to show you
+what the current request looks like
+
+To clear the current request, use `reset(cl)`:
+
+```{r resetClient}
+reset(cl)
+#> CMDC Client
+```
+
+Each dataset function will build up a request for the client and will
+return the client itself
+
+This allows us to use the pipe operator (`%>%`) to do the above as:
+
+```{r buildDatasetPipes}
+cl %>% covid(state="CA") %>% demographics()
+```
+
+#### Filtering data
+
+Each of the dataset functions has a number of filters that can be
+applied
+
+This allows you to select certain rows and/or columns
+
+For example, in the above example we had `covid(state="CA")`. This
+instructs the client to only fetch data for counties in the state of
+California
+
+Refer to the `info` for each dataset’s function for more information on
+which filters can be passed
+
+Also, check out the examples section at the end for more examples
+
+**NOTE:** If a filter is passed to one dataset in the request but is
+applicable to other datasets in the request, it will be applied to *all*
+datasets
+
+For example in `cl %>% covid(state="CA") %>% demographics()` we only
+specify a `state` filter on the `covid` dataset
+
+However, when the data is collected it will also be applied to
+`demographics`
+
+We do this because we end up doing an inner join on all requested
+datasets, so when we filter the state in `covid` they also get filtered
+in `demographics`
+
+### 3\. Fetch the data
+
+Now for the easy part\!
+
+When you are ready with your current
+
+To fetch the data, call the `fetch` function on the client:
+
+```{r fetch1}
+df <- fetch(cl)
+df
+
+names(df)
+```
+
+Notice that after each successful request, the client is reset so there
+are no “built-up” requests:
+
+```{r clearedClientAfterFetch}
+cl
+```
+
+## API keys
+
+Our API is and always will be free for unlimited public use
+
+However, we have an API key system in place to help us understand the
+needs of our users
+
+We kindly request that you register for an API key so we can understand
+how to prioritize future work
+
+In order to do so, you can use the `register` function
+
+```{r register, eval=FALSE}
+register(cl)
+```
+
+By default, function will prompt you to input an email address
+
+You can also pass the email address as the second argument for
+non-interactive use
+
+```{r registerwithEmail, eval=FALSE}
+register(cl, "me@me.com")
+```
+
+After you `register` for an API key it will be added to the client. All
+future requests with this client will use the API key
+
+We also save the key to a file at `~/.cmdc/apikey`
+
+If this file exists, each time you call `client` and do not explicitly
+pass an apikey we will read the key from `~/.cmdc/apikey` and
+automatically apply it for you
+
+Thus, to use the key in future sessions you just need to do `cl <-
+client()` and we’ll handle the key for you\!
+
+## Final thoughts
+
+Due to the urgency of the COVID-19 crisis and the need for researchers,
+modelers, and policy makers to have accurate data quickly, this project
+moves fast\!
+
+We have created this library so that as we add new datasets to our
+backend, they automatically appear here and are accessible via this
+library
+
+Please check back often and see what has been updated
+
+### Examples
+
+```{r singleDatasetAll}
+# Single dataset all
+cl %>% mobility_devices() %>% fetch()
+```
+
+```{r singleDatasetDeathFilter}
+# Single dataset filter on deaths
+cl %>% covid(fips="<100", variable="deaths_total", value=">100") %>% fetch()
+```
+
+```{r stateFilter}
+# Single dataset single states with all counties
+# OR: `cl %>% mobility_devices(state=as.integer(48)) %>% fetch()`
+# OR: `cl %>% mobility_devices(state="TX") %>% fetch()`
+cl %>% mobility_devices(state="48") %>% fetch()
+```
+
+```{r multipleStates}
+# Single dataset multiple states with all counties
+cl %>% mobility_devices(state=c("CA", "TX")) %>% fetch()
+```
+
+```{r variableSelection}
+# Single dataset variable select
+cl %>% demographics(variable = c("Total population", "Fraction of population over 65", "Median age")) %>% fetch()
+```
+
+```{r multpleDatasets}
+# Multiple datasets all data
+cl %>% demographics() %>% covid() %>% fetch()
+```
+
+```{r multipleOnlyStates}
+# Multiple datasets states only
+cl %>% demographics() %>% covid(fips="<100") %>% fetch()
+```
+
+```{r multipleOnlyCounties}
+# Multiple datasets counties only
+cl %>% demographics() %>% covid(fips=">1000") %>% fetch()
+```
