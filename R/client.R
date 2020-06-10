@@ -10,7 +10,7 @@
 #' @export %>%
 client <- function(apikey = NULL) {
   pyClient = cmdcPY$Client(apikey)
-  fields <- list(pyClient=pyClient)
+  fields <- list(pyClient = pyClient)
   structure(fields, class = c("cmdcClient"))
 }
 
@@ -22,7 +22,7 @@ print.cmdcClient <- function (x)
   print(x$pyClient)
 
 
-#' List all dataets accessible by the client
+#' List all datasets accessible by the client
 #'
 #' @export
 datasets.cmdcClient <-
@@ -38,6 +38,7 @@ fetch.cmdcClient <- function (x) {
   tibble::as_tibble(x$pyClient$fetch())
 }
 
+
 #' Fetch the currently constructed dataset
 #'
 #' @return A string containing the API Key
@@ -46,7 +47,6 @@ fetch.cmdcClient <- function (x) {
 register.cmdcClient <- function (x, ...) {
   x$pyClient$register(...)
 }
-
 
 
 #' Reset the current request on this client
@@ -59,16 +59,26 @@ reset.cmdcClient <- function (x) {
   x
 }
 
+
 #' Get information about the API as a whole (`info(client)`) or a specific
-#' endpoint (`info(client, endpoint)`, for exapmle `info(client, "demographics")`)
+#' endpoint (`info(client, endpoint)`, for example `info(client, "demographics")`)
+#'
 #' @export
-info.cmdcClient <- function(c, x=NULL) {
-  if (is.null(x)) {
-    print(c)
+info.cmdcClient <- function(cl, x = NULL) {
+  print_datasets <- function() {
     print("Datasets are:")
-    cat(c("", datasets(c)), sep="\n- ")
-    return
-  } else {
-    cat(c[[paste0(x, "_help")]])
+    cat(c("", datasets(cl)), sep = "\n- ")
   }
+  if (is.null(x)) {
+    print(cl)
+    print_datasets()
+    return(cl)
+  }
+  if (reticulate::py_has_attr(cl$pyClient, x)) {
+    print(cl$pyClient[[x]])
+  } else {
+    cat("Unknown dataset", x , "requested. Datasets are:")
+    print_datasets()
+  }
+  return(cl)
 }

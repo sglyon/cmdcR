@@ -2,10 +2,10 @@
 % Please edit documentation in R/client.R
 \name{datasets.cmdcClient}
 \alias{datasets.cmdcClient}
-\title{List all dataets accessible by the client}
+\title{List all datasets accessible by the client}
 \usage{
 \method{datasets}{cmdcClient}(x)
 }
 \description{
-List all dataets accessible by the client
+List all datasets accessible by the client
 }

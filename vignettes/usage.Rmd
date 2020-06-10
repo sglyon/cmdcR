@@ -1,6 +1,8 @@
 ---
 title: "usage"
-output: rmarkdown::html_vignette
+output:
+  github_document: null
+  rmarkdown::html_vignette: null
 vignette: >
   %\VignetteIndexEntry{usage}
   %\VignetteEngine{knitr::rmarkdown}
@@ -33,7 +35,7 @@ There are a few steps to using `cmdcR`:
 1. Create a client `cl <- client()`
 2. (Optional, one-time) Register for an API key `register(cl)`
 3. Construct a dataset: e.g. `cl %>% covid(state="FL") %>% demographics(variable="Median age")`
-4. Fetch the dataset (could also be passed as final funciton in ` %>% ` chain): `df <- fetch(cl)`
+4. Fetch the dataset (could also be passed as final function in ` %>% ` chain): `df <- fetch(cl)`
 
 Here's what the above example would have looked like:
 
@@ -62,23 +64,5 @@ or
 
 ```{r}
 info(cl, "mobility_devices")
-```
-
-
-### Example
-
-Let's build a map of total cases as of June 9, 2020 (date of writing)
-
-```{r}
-library(usmap)
-library(ggplot2)
-
-df <- cl %>% covid(variable="deaths_total", fips=c(1:60), dt="2020-06-05") %>% fetch()
-
-
-plot_usmap(data = df, values = "deaths_total") + 
-  scale_fill_continuous(
-     type="viridis", name = "Cumulative Deaths", label = scales::comma
-  ) + theme(legend.position = "right")
 ```
 

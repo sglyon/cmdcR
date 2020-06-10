@@ -3,11 +3,11 @@
 \name{info.cmdcClient}
 \alias{info.cmdcClient}
 \title{Get information about the API as a whole (`info(client)`) or a specific
-endpoint (`info(client, endpoint)`, for exapmle `info(client, "demographics")`)}
+endpoint (`info(client, endpoint)`, for example `info(client, "demographics")`)}
 \usage{
-info.cmdcClient(c, x = NULL)
+\method{info}{cmdcClient}(cl, x = NULL)
 }
 \description{
 Get information about the API as a whole (`info(client)`) or a specific
-endpoint (`info(client, endpoint)`, for exapmle `info(client, "demographics")`)
+endpoint (`info(client, endpoint)`, for example `info(client, "demographics")`)
 }
