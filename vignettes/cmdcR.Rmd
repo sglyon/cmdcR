@@ -160,7 +160,7 @@ Each of the datasets in the API have an associated function
 To add datasets to the current request, `datasetName(client)` function:
 
 ```{r buildRequestFuncs}
-covid(cl, state="CA")
+covid_us(cl, state="CA")
 
 demographics(cl)
 
@@ -183,7 +183,7 @@ return the client itself
 This allows us to use the pipe operator (`%>%`) to do the above as:
 
 ```{r buildDatasetPipes}
-cl %>% covid(state="CA") %>% demographics()
+cl %>% covid_us(state="CA") %>% demographics()
 ```
 
 #### Filtering data
@@ -193,7 +193,7 @@ applied
 
 This allows you to select certain rows and/or columns
 
-For example, in the above example we had `covid(state="CA")`. This
+For example, in the above example we had `covid_us(state="CA")`. This
 instructs the client to only fetch data for counties in the state of
 California
 
@@ -206,14 +206,14 @@ Also, check out the examples section at the end for more examples
 applicable to other datasets in the request, it will be applied to *all*
 datasets
 
-For example in `cl %>% covid(state="CA") %>% demographics()` we only
-specify a `state` filter on the `covid` dataset
+For example in `cl %>% covid_us(state="CA") %>% demographics()` we only
+specify a `state` filter on the `covid_us` dataset
 
 However, when the data is collected it will also be applied to
 `demographics`
 
 We do this because we end up doing an inner join on all requested
-datasets, so when we filter the state in `covid` they also get filtered
+datasets, so when we filter the state in `covid_us` they also get filtered
 in `demographics`
 
 ### 3\. Fetch the data
@@ -296,7 +296,7 @@ cl %>% mobility_devices() %>% fetch()
 
 ```{r singleDatasetDeathFilter}
 # Single dataset filter on deaths
-cl %>% covid(fips="<100", variable="deaths_total", value=">100") %>% fetch()
+cl %>% covid_us(location="<100", variable="deaths_total", value=">100") %>% fetch()
 ```
 
 ```{r stateFilter}
@@ -318,15 +318,15 @@ cl %>% demographics(variable = c("Total population", "Fraction of population ove
 
 ```{r multpleDatasets}
 # Multiple datasets all data
-cl %>% demographics() %>% covid() %>% fetch()
+cl %>% demographics() %>% covid_us() %>% fetch()
 ```
 
 ```{r multipleOnlyStates}
 # Multiple datasets states only
-cl %>% demographics() %>% covid(fips="<100") %>% fetch()
+cl %>% demographics() %>% covid_us(location="<100") %>% fetch()
 ```
 
 ```{r multipleOnlyCounties}
 # Multiple datasets counties only
-cl %>% demographics() %>% covid(fips=">1000") %>% fetch()
+cl %>% demographics() %>% covid_us(location=">1000") %>% fetch()
 ```
