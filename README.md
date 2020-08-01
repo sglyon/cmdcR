@@ -1,8 +1,8 @@
 # cmdcR
 
-**Notice**: The `cmdcR` library has been renamed to `covidcountydata`
+**Notice**: The `cmdcR` library has been renamed to `covidcountydataR`
 
-Please use that package instead of this one. See the [covidcountydata package on GitHub](https://github.com/CovidCountyData/covidcountydataR) for more information
+Please use that package instead of this one. See the [covidcountydataR package on GitHub](https://github.com/CovidCountyData/covidcountydataR) for more information
 
 This package will remain active for historical users of `cmdcR`, but we strongly encourage all users to upgrade to the new package to continue receiving new features and bug fixes.
 
